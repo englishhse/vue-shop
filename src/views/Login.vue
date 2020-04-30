@@ -2,7 +2,7 @@
   <div id="login">
     <div class="login-box">
       <div class="touxiang">
-        <img src="@/assets/logo.png" alt="">
+        <img src="@/assets/img/logo.png" alt="">
       </div>
       <el-form
       ref="form"
@@ -60,10 +60,8 @@
             if(!vali) return
             // 携带用户名和密码发起登录请求
             const res = await this.$http.post('/login', this.loginForm)
-            console.log(res)
             if(res.data.meta.status!==200)return this.$message.error('登陆失败')
             this.$message.success('登陆成功')
-            console.log(res.data.data.token)
             //把服务器返回的token存放在sessionStorage中
             window.sessionStorage.setItem('token',res.data.data.token)
             //跳转至home页面

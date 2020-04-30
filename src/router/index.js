@@ -3,8 +3,13 @@ import VueRouter from 'vue-router'
 import Login from 'views/Login.vue'
 
 import '../assets/fonts/iconfont.css'
-Vue.use(VueRouter)
 
+
+
+Vue.use(VueRouter)
+import welcome from '../views/homeChild/WelCome.vue'
+
+const user = () => import ('../views/user/User.vue')
 const routes = [
   {
     path: '/' ,
@@ -16,7 +21,18 @@ const routes = [
   },
   {
     path: '/home',
-    component: () => import('views/Home.vue')
+    component: () => import('views/Home.vue'),
+    redirect:'/welcome',
+    children:[
+      {
+        path:'/welcome',
+        component: welcome
+      },
+      {
+        path:'/users',
+        component: user
+      }
+    ]
   }
 ]
 
