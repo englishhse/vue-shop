@@ -9,7 +9,9 @@ import '../assets/fonts/iconfont.css'
 Vue.use(VueRouter)
 import welcome from '../views/homeChild/WelCome.vue'
 
-const user = () => import ('../views/user/User.vue')
+const user = () => import ('views/user/User.vue')
+const right = ()=> import ('views/power/Rights.vue')
+const roles = ()=> import ('views/power/Roles.vue')
 const routes = [
   {
     path: '/' ,
@@ -31,6 +33,14 @@ const routes = [
       {
         path:'/users',
         component: user
+      },
+      {
+        path:'/rights',
+        component: right
+      },
+      {
+        path:'/roles',
+        component: roles
       }
     ]
   }

@@ -2,7 +2,7 @@
   <div class="user">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item><a href="/">用户管理</a></el-breadcrumb-item>
+      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 卡片区域 -->
@@ -36,7 +36,7 @@
             <el-button type="primary" size="mini" icon="el-icon-edit" @click="editDialog(scope.row.id)"></el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteUser(scope.row.id)"></el-button>
             <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-              <el-button type="warning" size="mini" icon="el-icon-setting"></el-button>
+              <el-button type="warning" size="mini" icon="el-icon-setting" @click="allotRoles(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -67,6 +67,7 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
+
     <!-- 修改用户弹出框 -->
     <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%" @close="editDialogClose">
       <el-form :model="editForm" :rules="editRules" ref="editFormRef" label-width="100px">
@@ -85,6 +86,22 @@
         <el-button type="primary" @click="editUser">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色弹出框 -->
+    <el-dialog title="角色分配" :visible.sync="allotDialogVisible"
+    width="50%" ref="allotRef" @close="allotDialogClose">
+      <p>当前用户为：{{currentUserName}}</p>
+      <p>当前角色为：{{currentRoleName}}</p>
+      <el-select  placeholder="请选择" v-model="selectedRId">
+        <el-option v-for="item in roleNames" :key="item.id"
+        :label="item.roleName" :value="item.id">
+        </el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="allotDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sendNewRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -101,6 +118,15 @@
         total: 0,
         dialogVisible: false,
         editDialogVisible: false,
+        allotDialogVisible: false,
+        //当前进行角色编辑角色信息
+        currentUserName: '',
+        currentRoleName: '',
+        currentId:'',
+        //用于接收所有角色名称的数组，分配角色时可让用户选择
+        roleNames: [],
+        //记录用户选择的角色id
+        selectedRId:'',
         //添加用户的表单数据
         addForm: {
           username: '',
@@ -235,17 +261,51 @@
         })
       },
       async deleteUser(id) {
-       const res = await  this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        const res = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).catch(err=>err)
-       if(res==='cancel') return this.$message.info('已取消删除')
-       const {data:result} =await this.$http.delete('users/'+id)
-       if (result.meta.status !== 200) return this.$message.error('删除用户信息失败')
-       this.$message.success('删除用户信息成功')
-       this.getUserList()
-      }
+        }).catch(err => err)
+        if (res === 'cancel') return this.$message.info('已取消删除')
+        const {
+          data: result
+        } = await this.$http.delete('users/' + id)
+        if (result.meta.status !== 200) return this.$message.error('删除用户信息失败')
+        this.$message.success('删除用户信息成功')
+        this.getUserList()
+      },
+      // 分配角色按钮点击触发
+      async allotRoles(info) {
+        this.currentRoleName = info.role_name
+        this.currentUserName = info.username
+        this.currentId = info.id
+        const {
+          data: res
+        } = await this.$http.get('roles')
+
+        if (res.meta.status !== 200) {
+          return this.$message.error(res.meta.msg)
+        }
+        this.roleNames = res.data
+        this.allotDialogVisible = true
+      },
+      //发送用户新选择的角色
+        async sendNewRole(){
+          if(!this.selectedRId) return this.$message.error('请选择一个角色')
+          const {
+            data: res
+          } = await this.$http.put('users/' + this.currentId+'/role', {
+            rid:this.selectedRId
+          })
+          if (res.meta.status !== 200) return this.$message.error('修改用户角色信息失败')
+          this.$message.success('修改用户角色信息成功')
+        },
+
+        //关闭分配角色提升框后进行刷新操作
+        allotDialogClose(){
+          this.selectedRId = ''
+        }
+
     },
     created() {
       this.getUserList()
