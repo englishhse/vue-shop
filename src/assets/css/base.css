@@ -4,3 +4,6 @@ html body #app {
 	padding: 0;
 	min-width: 1366px;
 }
+.el-cascader-menu{
+  height: 300px;
+}
