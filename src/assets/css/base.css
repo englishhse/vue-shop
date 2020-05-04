@@ -7,3 +7,16 @@ html body #app {
 .el-cascader-menu{
   height: 300px;
 }
+
+ .el-breadcrumb {
+    margin-bottom: 15px;
+  }
+
+  .el-table {
+    margin-top: 15px;
+    font-size: 12px
+  }
+	
+	.el-alert {
+		margin: 15px 0;
+	}
