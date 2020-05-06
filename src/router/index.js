@@ -14,6 +14,8 @@ const right = ()=> import ('views/power/Rights.vue')
 const roles = ()=> import ('views/power/Roles.vue')
 const cate = ()=> import ('views/goods/Cate.vue')
 const params = ()=> import ('views/goods/Params.vue')
+const list = ()=> import ('views/goods/List.vue')
+const add = ()=> import ('views/goods/Add.vue')
 const routes = [
   {
     path: '/' ,
@@ -51,6 +53,14 @@ const routes = [
       {
         path:'/params',
         component: params
+      },
+      {
+        path:'/goods',
+        component: list
+      },
+      {
+        path:'/goods/add',
+        component: add
       }
     ]
   }

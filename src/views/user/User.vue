@@ -40,7 +40,7 @@
             </el-tooltip>
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> 
       <!-- 分页条 -->
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="params.pagenum"
         :page-sizes="[1, 2, 3, 4]" :page-size="params.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="0">
